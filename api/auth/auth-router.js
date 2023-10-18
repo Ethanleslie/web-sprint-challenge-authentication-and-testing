@@ -2,10 +2,11 @@ const router = require('express').Router();
 const {JWT_SECRET} = require('../../secrets/index')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const User = require('../../users/users-model')
+const User = require('../../users/users-model');
+const { checkIfUsernameFree, checkUsernameExists } = require('./auth.middleware');
 
 
-router.post('/register', (req, res, next) => {
+router.post('/register', checkIfUsernameFree,  (req, res, next) => {
   
   /*
     IMPLEMENT
@@ -33,15 +34,16 @@ router.post('/register', (req, res, next) => {
       the response body should include a string exactly as follows: "username taken".
   */
 const {username, password } = req.body
+    console.log(username, password)
 const hash = bcrypt.hashSync(password, 8)    
-User.add({username, password: hash, })     // do i need to add the restrict function to the get jokes endpoint or is it already using it through the server 
-      .then(newUser => {                   // dont forget about module 4 project not making a commit
+User.add({username, password: hash })     
+      .then(newUser => {                   
         res.status(201).json(newUser)
       })
       .catch(next)
 });
 
-router.post('/login', (req, res, next) => {
+router.post('/login', checkUsernameExists, (req, res, next) => {
   
   /*
     IMPLEMENT
@@ -66,24 +68,22 @@ router.post('/login', (req, res, next) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
-if(bcrypt.compareSync(req.body.password, req.user.password)){
+ const {password, username} = req.body
+if(bcrypt.compareSync(username, req.user.username && password, req.user.password)){
   const token = buildToken(req.user)
   res.json({
     message: `welcome, ${req.user.username}`,
     token,
   })
-}else if 
-  (!req.body.password || !req.body.username){
+}else{
     next({status: 401, message: 'username and password required'})
-  }
- else {
-  next({status: 401, message: 'invalid credentials'})
 }
+
 });
 
 function buildToken(user) {
 const payload = {
-  subject: user.user_id,
+  subject: user.id,
   username: user.username
 }
 const options = {
