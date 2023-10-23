@@ -3,7 +3,7 @@
  
  
  const restrict = (req, res, next) => {
-  next();
+  
   const token = req.headers.authorization
   if(!token) {
     return next({status: 401, message: 'token required'})

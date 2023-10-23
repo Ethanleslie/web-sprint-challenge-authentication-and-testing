@@ -81,7 +81,7 @@ router.post("/login", checkUsernameExists, async (req, res, next) => {
     console.log("user", user.password);
     const token = buildToken(req.user);
     res.json({
-      message: `welcome, ${req.user.username}`,
+      message: `welcome, ${user.username}`,
       token,
     });
   }
