@@ -8,7 +8,7 @@ const {
   checkUsernameExists,
 } = require("./auth.middleware");
 
-router.post("/register", checkIfUsernameFree, (req, res, next) => {
+router.post("/register", checkIfUsernameFree, async (req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -40,7 +40,7 @@ router.post("/register", checkIfUsernameFree, (req, res, next) => {
     next({ status: 404, message: "username and password required" });
   } else {
     const hash = bcrypt.hashSync(password, 8);
-    User.add({ username, password: hash })
+  await User.add({ username, password: hash })
       .then((newUser) => {
         res.status(201).json(newUser);
       })
