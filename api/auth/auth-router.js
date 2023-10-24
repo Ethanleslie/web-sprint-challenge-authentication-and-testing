@@ -35,7 +35,7 @@ router.post("/register", checkIfUsernameFree, async (req, res, next) => {
       the response body should include a string exactly as follows: "username taken".
   */
   const { username, password } = req.body;
-  console.log(username, password);
+  console.log('req.user', req.user);
   if (!username || !password) {
     next({ status: 404, message: "username and password required" });
   } else {
