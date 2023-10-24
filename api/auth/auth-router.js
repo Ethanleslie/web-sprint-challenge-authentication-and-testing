@@ -39,7 +39,7 @@ router.post("/register", checkIfUsernameFree, async (req, res, next) => {
   if (!username || !password) {
     next({ status: 404, message: "username and password required" });
   } else {
-    const hash = bcrypt.hashSync(password, 8);
+    const hash = bcrypt.hashSync(password, 6);
   await User.add({ username, password: hash })
       .then((newUser) => {
         res.status(201).json(newUser);
