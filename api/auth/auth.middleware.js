@@ -3,10 +3,10 @@ const User = require("../../users/users-model");
 async function checkIfUsernameFree(req, res, next) {
   try {
     const [user] = await User.find({ username: req.body.username });
+    const { username, password } = req.body;
    // console.log('user username:', user.username)
-    if (req.body.username === user?.username) {
-      console.log("else");
-      next({ status: 401, message: "username taken" });
+      if (!username || !password) {
+        next({ status: 404, message: "username and password required" });
     } else {
       req.user = user;
       next();
